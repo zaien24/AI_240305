@@ -1,0 +1,13 @@
+prefix=d:/dev/AI/.conda/Library
+exec_prefix=d:/dev/AI/.conda/Library
+libdir=d:/dev/AI/.conda/Library/lib
+sharedlibdir=d:/dev/AI/.conda/Library/lib
+includedir=d:/dev/AI/.conda/Library/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
