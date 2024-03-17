@@ -16,14 +16,24 @@ system_instruction = """
 위의 메뉴 말고는 없다고 생각하면돼
 """
 
-reponse = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-                {"role": "system", "content": system_instruction},
-                {"role": "user", "content": "어떤 햄버거 있어?"},              
-        ]
-)
+messages=[{"role": "system", "content": system_instruction}]
 
-resp = response.to_dict_recursive()
-print(resp)
+def ask(text):
+    user_input = {"role": "user", "content": text}
+    messages.append(user_input)
+    
+    reponse = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages)
+    resp = response.to_dict_recursive()
+    bot_text =reponse['choices'][0]['message']['content']
+    bot_resp = {"role": "assistant", "content": bot_text}
+    messages.append(bot_resp)
+    return bot_text
+
+print(ask("어떤 햄버거 팔아?"))
+
+
+
+ 
 
