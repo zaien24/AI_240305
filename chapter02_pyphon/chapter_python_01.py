@@ -53,3 +53,17 @@ a = [1,2,3,1,2]
 print(a)
 a.append(10)
 print(a)
+
+# dict
+a = {'a':1, 'b': 2}
+print(a)
+
+print(a['b'])
+
+
+hp_by_character = {'genji':200, 'doomfist': 450}
+
+character = 'doomfist'
+print(f"{character} hp: {hp_by_character['diinfust']}")
+
+
