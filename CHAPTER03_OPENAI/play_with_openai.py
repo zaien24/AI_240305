@@ -31,7 +31,13 @@ def ask(text):
     messages.append(bot_resp)
     return bot_text
 
-print(ask("어떤 햄버거 팔아?"))
+while True:
+    user_input = input("user input: ")
+    bot_resp = ask(user_input)
+    
+    print("-"*30)
+    print(f"user_input: {user_input}")
+    print(f"bot_resp: {bot_resp}")
 
 
 
