@@ -4,12 +4,26 @@ import openai
 # Load your API key from an environment variable or secret management service
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+system_instruction = """
+너는 햄버거 가게 AI비서야
+
+아래는 햄버거 종류야. 아래 종류의 버거 말고는 다른 버거는 없어
+
+- 빅맥
+- 쿼터파운더
+- 치즈버거
+
+위의 메뉴 말고는 없다고 생각하면돼
+"""
+
 reponse = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": "Who won the world series in 2020?"},
-                {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-                {"role": "user", "content": "Where was it played?"}            
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": "어떤 햄버거 있어?"},              
         ]
 )
+
+resp = response.to_dict_recursive()
+print(resp)
+
