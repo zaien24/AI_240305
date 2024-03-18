@@ -3,6 +3,12 @@ import streamlit as st
 
 openai.api_key = "<YOUR_OPENAI_API_KEY>"
 
+parallel_example = {
+            "한국어": ["오늘 날씨 어때", "딥러닝 기반의 AI기술이 인기를끌고 있다."],
+            "영어": ["How is the weather today", "Deep learning-based AI technology is gaining popularity."],
+            "일본어": ["今日の天気はどうですか", "ディープラーニングベースのAIテクノロジーが人気を集めています。"]
+                    }
+
 def translate_text_using_text_davinci(text, src_lang, trg_lang):
     response = openai.Completion.create(engine="text-davinci-003", # 175B 
                                         prompt=f"Translate the following {src_lang} text to {trg_lang}: {text}",
@@ -13,13 +19,30 @@ def translate_text_using_text_davinci(text, src_lang, trg_lang):
     return translated_text
 
 def translate_text_using_chatgpt(text, src_lang, trg_lang):
+    def build_fewshot(src_lang, trg_lang):
+        src_examples = parallel_example[src_lang]
+        trg_examples = parallel_example[trg_lang]
+
+        fewshot_messages = []
+
+        for src_text, trg_text in zip(src_examples, trg_examples):
+            fewshot_messages.append({"role": "user", "content": src_text})
+            fewshot_messages.append({"role": "assistant", "content": trg_text})
+
+        return fewshot_messages
+
     system_instruction = f"assistant는 번역앱으로서 동작한다. {src_lang}을 {trg_lang}으로 적절하게 번역하고 번역된 텍스트만 출력한다."
 
+    fewshot_messages = build_fewshot(src_lang=src_lang, trg_lang=trg_lang)
+
     messages = [{"role": "system", "content": system_instruction},
+                *fewshot_messages,
                 {"role": "user", "content": text}]
 
+    print(messages)
+    
     response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
-                                            messages=messages) 
+                                            messages=messages)
     translated_text = response['choices'][0]['message']['content']
     return translated_text
 
