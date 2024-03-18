@@ -1,3 +1,7 @@
+# fastapi api 서버
+# openai api를 활용해서 만든 광고 문구 작성 함수를 호출
+from fastapi import FastAPI
+from pydantic import BaseModel
 import openai
 
 openai.api_key = "<YOUR_OPENAI_API_KEY>"
@@ -40,6 +44,20 @@ class SloganGenerator:
             result = self._infer_using_chatgpt(prompt=prompt)    
         return result
     
-slogan_generator = SloganGenerator(engine="gpt-3.5-turbo")
-result = slogan_generator.generate(product_name="나이키 신발", details="예쁘고 편안합니다", tone_and_manner="과정")
-print(result)
+app = FastAPI()
+
+class Product(BaseModel):
+    product_name: str
+    details: str
+    tone_and_manner: str
+    
+@app.post("/create_ad_slogan")
+def create_ad_slogan(product: Product):
+    slogan_generator = SloganGenerator("gpt-3.5-turbo")
+    
+    ad_slogan = slogan_generator.generate(product_name=product.product_name,
+                                          details=product.details,
+                                          tone_and_manner=product.tone_and_manner
+                                          )
+    return {"ad_slogan": ad_slogan}
+
