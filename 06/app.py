@@ -19,7 +19,7 @@ def translate_text_using_chatgpt(text, src_lang, trg_lang):
                 {"role": "user", "content": text}]
 
     response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
-                                            messages=messages)
+                                            messages=messages) 
     translated_text = response['choices'][0]['message']['content']
     return translated_text
 
@@ -29,7 +29,7 @@ trg_lang = st.selectbox("목표 언어", ["영어", "한국어", "일본어"], i
 
 if st.button("번역"):
     # 번역 함수를 만들어서 (text, src_lang, trg_lang) -> translated_text
-    translated_text = translate_text_using_text_davinci(text, src_lang, trg_lang)
+    translated_text = translate_text_using_chatgpt(text, src_lang, trg_lang)
     st.success(translated_text)
     
     
