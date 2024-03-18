@@ -24,13 +24,22 @@ class SloganGenerator:
         result = response.choices[0].text.strip()
         return result
     
+    def _infer_using_chatgpt(self, prompt):
+        system_instruction = "assistant는 마케팅 문구 작성 도우미로 동작한다. user의 내용을 참고하여 마케팅 문구를 작성해라"
+        messages = [{"role": "system", "content": system_instruction},
+                    {"role": "user", "content": prompt}]
+        response = openai.ChatCompletion.create(model=self.engine, messages=messages)
+        result = response['choices'][0]['message']['content']
+        return result
+    
     def generate(self, product_name, details, tone_and_manner):
         prompt = f"제품 이름: {product_name}\n주요 내용: {details}\n광고 문구의 스타일: {tone_and_manner} 위 내용을 참고하여 마케팅 문구를 만들어라."
         if self.infer_type == 'completion':
             result = self._infer_using_completion(prompt=prompt)
-    
+        elif self.infer_type == 'chat':
+            result = self._infer_using_chatgpt(prompt=prompt)    
         return result
     
-slogan_generator = SloganGenerator("gpt-3.5-turbo")
+slogan_generator = SloganGenerator(engine="gpt-3.5-turbo")
 result = slogan_generator.generate(product_name="나이키 신발", details="예쁘고 편안합니다", tone_and_manner="과정")
 print(result)
