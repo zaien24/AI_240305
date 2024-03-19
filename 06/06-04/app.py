@@ -1,6 +1,8 @@
 import streamlit as st
 import requests
 import pandas as pd
+import os
+import io
 
 summarize_url = "http://localhost:8000/summarize"
 
@@ -10,12 +12,18 @@ def summarize(text):
     return summary
 
 def summarize_df(df):
-    news_summaries : []
-    for news_origin in df['뉴스원문']:
+    global progress_bar
+    
+    total = len(df)
+    news_summaries = []
+    
+    for i, news_origin in enumerate(df['뉴스원문'], start=1):
         summary = summarize(news_origin)
         news_summaries.append(summary)
+        
+        progress_bar.progress(i/total, text="progress")
+        
     df['뉴스요약'] - news_summaries
-    
     return df
     
 
@@ -44,11 +52,15 @@ with tab2:
         
         df = pd.read_excel(uploaded_file)
         
+        df = summarize_df(df)
         st.dataframe(df)
         
-        new_df = summarize_df(df)
-        
-        st.dataframe(new_df)
+        file_base_name = os.path.splitext(os.path.basename(uploaded_file.name))[0]
+        st.download_button(
+            label="Download",
+            data=to_excel(df),
+            file_name=f"{file_base_name}__summarized.xlsx"
+        )
         
         
 
