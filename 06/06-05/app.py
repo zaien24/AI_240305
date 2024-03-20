@@ -20,18 +20,24 @@ def chat(text):
 
 st.title("챗봇 서비스")
 
-input_text = st.text_input("You")
-if input_text:
-    chat(input_text)
+row1 = st.container()
+row2 = st.container()
 
 
-for i, msg_obj in enumerate(st.session_state['messages']):
-        msg = msg_obj['content']
-        is_user = False
-        if i % 2 == 0:
-            is_user = True
+with row2:
+    input_text = st.text_input("You")
+    if input_text:
+        chat(input_text)
 
-        message(msg, is_user=is_user, key=f"chat_{is}")   
+
+with row1:
+    for i, msg_obj in enumerate(st.session_state['messages']):
+            msg = msg_obj['content']
+            is_user = False
+            if i % 2 == 0:
+                is_user = True
+
+            message(msg, is_user=is_user, key=f"chat_{i}")   
         
         
         
