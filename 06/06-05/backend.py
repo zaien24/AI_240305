@@ -11,7 +11,7 @@ def chat(messages):
     assistant_turn = resp_dict['choices'][0]['message']
     return assistant_turn # {"role": "assistant", "content": "blahblahblah"}
 
-app = FastAPI()
+app = FastAPI() 
 
 class Turn(BaseModel):
     role: str
@@ -20,7 +20,7 @@ class Turn(BaseModel):
 class Messages(BaseModel):
     messages: List[Turn]  # [{"role": "user", "content": "blahblahblah"}, {"role": "assistant", "content": "blahblahblah"}, ...]
     
-@app.post("/chat")
+@app.post("/chat", response_model=Turn)
 def post_chat(messages: Messages):
     assistant_turn = chat(messages=messages['messages'])
     return assistant_turn
