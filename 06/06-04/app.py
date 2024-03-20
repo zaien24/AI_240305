@@ -4,6 +4,10 @@ import pandas as pd
 import os
 import io
 
+if 'prev_uploaded_file' not in st.session_state:
+    st.session_state['prev_uploaded_file'] = None
+    st.session_state['prev_df'] = None
+
 summarize_url = "http://localhost:8000/summarize"
 
 def summarize(text):
@@ -26,6 +30,13 @@ def summarize_df(df):
     df['뉴스요약'] - news_summaries
     return df
     
+def to_excel(df):
+    output = io.BytesIO()
+    writer = pd.ExcelWriter(output, engine="xlsxwriter")
+    df.to_excel(writer, sheet_name="Sheet1", index=False)
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
 
 st.title("요약 서비스")
 tab1, tab2 = st.tabs(["실시간", "파일 업로드"])
@@ -47,14 +58,20 @@ with tab2:
 
     if uploaded_file:
         st.success("업로드 성공!")
-        
-        progress_bar = st.progress(0, text="progress")
-        
-        df = pd.read_excel(uploaded_file)
-        
-        df = summarize_df(df)
-        st.dataframe(df)
-        
+
+        if uploaded_file == st.session_state['prev_uploaded_file']:
+            df = st.session_state['prev_df']
+        else:
+            progress_bar = st.progress(0, text="progress")
+
+            df = pd.read_excel(uploaded_file)
+
+            df = summarize_df(df)
+            st.dataframe(df)
+
+            st.session_state['prev_uploaded_file'] = uploaded_file
+            st.session_state['prev_df'] = df
+
         file_base_name = os.path.splitext(os.path.basename(uploaded_file.name))[0]
         st.download_button(
             label="Download",
