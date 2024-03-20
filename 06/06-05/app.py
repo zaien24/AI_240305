@@ -16,4 +16,7 @@ for i, msg_obj in enumerate(st.session_state['messages']):
         if i % 2 == 0:
             is_user = True
 
-        message(msg, is_user=is_user)
+        message(msg, is_user=is_user)   
+        
+        
+        
